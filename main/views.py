@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from main.forms import RegistrationForm, CreatePostForm, EditProfileForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -12,18 +12,20 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import UpdateView
 from django.db.models import Count
 from main.models import Post, MyUser
-from django.shortcuts import get_object_or_404
 from django.views.generic import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.edit import DeleteView
-
+from django.urls import reverse
+from .forms import EditPostForm
 
 def index(request):
     return render(request, 'basic.html')
 
 class MainLoginView(LoginView):
     template_name = 'login.html'
-    success_url = reverse_lazy('main:profile')
+
+    def get_success_url(self):
+        return reverse('main:index')
 
 def registration(request):
     if request.method == 'POST':
@@ -105,6 +107,20 @@ class DeleteProfileView(LoginRequiredMixin, DeleteView):
 class DetailPost(generic.DetailView):
     model = Post
     template_name = 'detail_post.html'
+
+def edit_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.method == 'POST':
+        form = EditPostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('detail_post', pk=post.pk)
+    else:
+        form = EditPostForm(instance=post)
+
+    return render(request, 'edit_post.html', {'form': form, 'post': post})
+
 
 class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post

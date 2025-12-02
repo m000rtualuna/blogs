@@ -13,5 +13,6 @@ urlpatterns = [
     path('account/profile/delete/', views.DeleteProfileView.as_view(), name='delete-profile'),
     path('create_post/', views.create_post, name='create-post'),
     path('post/<int:pk>', views.DetailPost.as_view(), name='detail-post'),
-    path('delete_post/', views.DeletePost.as_view(), name='delete-post'),
+    path('post/<int:pk>/edit_post/', views.edit_post, name='edit-post'),
+    path('post/<int:pk>/delete_post/', views.DeletePost.as_view(), name='delete-post'),
 ]

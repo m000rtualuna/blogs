@@ -42,6 +42,14 @@ class RegistrationForm(forms.ModelForm):
         return user
 
 
+class EditProfileForm(forms.ModelForm):
+    username = forms.CharField(label="никнейм", help_text='')
+    class Meta:
+        model = MyUser
+        fields = ('username', 'avatar', 'bio')
+        labels = {'username': 'никнейм', 'avatar': 'аватарка', 'bio': 'расскажите о себе'}
+
+
 class CreatePostForm(forms.ModelForm):
     class Meta:
         model = Post
@@ -49,9 +57,8 @@ class CreatePostForm(forms.ModelForm):
         labels = {'post_content': 'содержание поста'}
 
 
-class EditProfileForm(forms.ModelForm):
-    username = forms.CharField(label="никнейм", help_text='')
+class EditPostForm(forms.ModelForm):
     class Meta:
-        model = MyUser
-        fields = ('username', 'avatar', 'bio')
-        labels = {'username': 'никнейм', 'avatar': 'аватарка', 'bio': 'расскажите о себе'}
+        model = Post
+        fields = ['post_content']
+        labels = {'post_content': 'содержание поста'}

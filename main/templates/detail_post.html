@@ -1,5 +1,11 @@
 {% extends "basic.html" %}
 {% block content %}
-<h2>профиль</h2>
+<h2>детали получается</h2>
 
+{% if post_list %}
+    {% for p in post_list %}
+    <div class="post">
+        <a href="{% url 'main:edit-post' pk=p.id %}"><p>{{ p.post_content }}</p></a>
+        {% endfor %}
+        {% endif %}
 {% endblock %}
