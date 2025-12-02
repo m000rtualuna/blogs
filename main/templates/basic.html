@@ -13,7 +13,7 @@
         <a href="{% url 'main:index' %}">главная</a>
         {% if user.is_authenticated %}
         <a href="{% url 'main:profile' %}">профиль</a>
-        <a href="{% url 'main:create_post' %}">создать пост</a>
+        <a href="{% url 'main:create-post' %}">создать пост</a>
         <a href="{% url 'main:logout' %}">выйти</a>
         {% else %}
         <a href="{% url 'main:login' %}">вход</a>

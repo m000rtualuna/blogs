@@ -12,19 +12,5 @@
 <p>здесь аватарка (не найдено)</p>
 {% endif %}
 <a href="{% url 'main:edit-profile' %}">редактировать профиль</a>
-<h3>посты:</h3>
-{% if posts %}
-{% for post in posts %}
-    <div class="post-content">
-        <h5 class="post-author">{{ post.username }}</h5>
-        <strong>Опубликовано:</strong> {{ post.pub_date }} <br>
-        {% if post.image %}
-        <img src="{{ post.image.url }}" class="img" alt="фото">
-        {% endif %}
-    </div>
-</div>
-{% endfor %}
-{% else %}
-<p>здесь должны быть посты (не найдено)</p>
-{% endif %}
+<a href="{% url 'main:delete-profile' %}">удалить</a>
 {% endblock %}

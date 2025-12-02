@@ -10,6 +10,8 @@ urlpatterns = [
     path('account/logout/', views.logout_view, name='logout'),
     path('account/profile/', views.profile, name='profile'),
     path('account/profile/edit/', views.EditProfileView.as_view(), name='edit-profile'),
-    path('account/profile/delete/', views.profile, name='delete-profile'),
-    path('create_post/', views.create_post, name='create_post'),
+    path('account/profile/delete/', views.DeleteProfileView.as_view(), name='delete-profile'),
+    path('create_post/', views.create_post, name='create-post'),
+    path('post/<int:pk>', views.DetailPost.as_view(), name='detail-post'),
+    path('delete_post/', views.DeletePost.as_view(), name='delete-post'),
 ]

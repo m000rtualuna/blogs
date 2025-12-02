@@ -12,6 +12,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import UpdateView
 from django.db.models import Count
 from main.models import Post, MyUser
+from django.shortcuts import get_object_or_404
+from django.views.generic import DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic.edit import DeleteView
 
 
 def index(request):
@@ -79,45 +83,40 @@ class EditProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-from django.contrib.auth import logout
-from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404
-from django.views.generic import DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-# from .models import AdvUser
-
-class DeleteUserView(LoginRequiredMixin, DeleteView):
+class DeleteProfileView(LoginRequiredMixin, DeleteView):
     model = MyUser
-    template_name = 'main/delete_profile.html'
+    template_name = 'delete_profile.html'
     success_url = reverse_lazy('main:index')
 
-    def get_object(self, queryset=None):
-        if queryset is None:
-            queryset = self.get_queryset()
-        return get_object_or_404(queryset, pk=self.request.user.pk)
+    def dispatch(self, request, *args, **kwargs):
+        self.user_id = request.user.pk
+        return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         logout(request)
         return super().post(request, *args, **kwargs)
 
+    def get_object(self, queryset=None):
+        if not queryset:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk=self.user_id)
 
 
-"""
+class DetailPost(generic.DetailView):
+    model = Post
+    template_name = 'detail_post.html'
 
-
-class DeleteRequest(LoginRequiredMixin, DeleteView):
+class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('main:index')
-    template_name = "delete_request.html"
+    template_name = "delete_post.html"
 
-    def has_permission(self, request):
+    def test_func(self):
         obj = self.get_object()
-        return obj.MyUser == request.user
+        return obj.MyUser == self.request.user
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.image:
             self.object.image.delete(save=False)
-            return super().delete(request, *args, **kwargs)  """
-
+        return super().delete(request, *args, **kwargs)
