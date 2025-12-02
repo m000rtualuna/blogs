@@ -1,0 +1,9 @@
+{% extends "basic.html" %}
+{% block content %}
+<h2>Изменение информации пользователя {{ user.username }}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

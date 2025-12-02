@@ -1,0 +1,31 @@
+{% extends "basic.html" %}
+{% block content %}
+{% if post_list %}
+    {% for p in post_list %}
+    <div class="post">
+        <a href="#"><p>{{ p.post_content }}</p></a>
+        <p>опубликовано: {{ p.pub_date|date:"d.m.Y H:i" }}</p>
+        <p>{{ p.comment_count }} комментариев</p>
+        <p>{{ p.like_count }} лайков</p>
+    </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+        {% endif %}
+        <span class="current">
+          страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+{% else %}
+    <p>пусто :(</p>
+{% endif %}
+{% endblock %}
+

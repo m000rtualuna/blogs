@@ -1,0 +1,9 @@
+{% extends "basic.html" %}
+{% block content %}
+<h2>вход в аккаунт</h2>
+<form method="post" action="{% url 'main:login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">войти</button>
+</form>
+{% endblock %}

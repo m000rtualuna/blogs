@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% block title %}<title>модный сайтик</title>{% endblock %}
+    <meta charset="utf-8"/>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/styles.css' %}"/>
+</head>
+<body>
+<div class="container">
+    {% block sidebar %}
+    <ul class="nav">
+        <a href="{% url 'main:index' %}">главная</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'main:profile' %}">профиль</a>
+        <a href="{% url 'main:create_post' %}">создать пост</a>
+        <a href="{% url 'main:logout' %}">выйти</a>
+        {% else %}
+        <a href="{% url 'main:login' %}">вход</a>
+        <a href="{% url 'main:registration' %}">регистрация</a>
+        {% endif %}
+    </ul>
+    {% endblock %}
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>
