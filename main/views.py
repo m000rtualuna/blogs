@@ -31,7 +31,7 @@ class MainLoginView(LoginView):
 
 def registration(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)

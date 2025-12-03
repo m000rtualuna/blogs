@@ -23,8 +23,8 @@ class RegistrationForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if username and not re.fullmatch(r"^[a-zA-z-]+$", username):
-            raise forms.ValidationError("логин должен содержать только латиницу и дефисы")
+        if username and not re.fullmatch(r"^[a-zA-z_0-9]+$", username):
+            raise forms.ValidationError("логин должен содержать только латиницу, нижнее подчеркивание и цифры")
         return username
 
     def clean(self):

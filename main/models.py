@@ -4,7 +4,7 @@ from blogs import settings
 
 
 class MyUser(AbstractUser):
-    avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars', null=True, blank=False)
     bio = models.TextField()
 
 class Post(models.Model):
