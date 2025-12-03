@@ -102,7 +102,7 @@ class PostListView(generic.ListView):
     context_object_name = 'post_list'
 
     def get_queryset(self):
-        return Post.objects.annotate(comment_count=Count('comment'), like_count=Count('like')).order_by('-pub_date')
+        return Post.objects.annotate(comment_count=Count('comment'), like_count=Count('likes')).order_by('-pub_date')
 
 
 @login_required
@@ -194,5 +194,17 @@ def delete_comment(request, pk):
     if request.method == 'POST':
         comment.delete()
         return redirect('main:index')
+
+    return redirect('main:index')
+
+@login_required
+def toggle_like(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+
+    if user in post.likes.all():
+        post.likes.remove(user)
+    else:
+        post.likes.add(user)
 
     return redirect('main:index')

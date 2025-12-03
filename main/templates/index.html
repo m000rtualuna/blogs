@@ -19,6 +19,15 @@
         {% empty %}
             <p>прокомментируйте этот пост первым</p>
         {% endfor %}
+
+        <a href="{% url 'main:toggle_like' pk=p.pk %}">
+                    {% if request.user in post.likes.all %}
+                        Уже не нравится
+                    {% else %}
+                        Нравится
+                    {% endif %}
+                </a>
+
         <a href="{% url 'main:add-comment' pk=p.id %}">прокомментировать</a>
     </div>
     {% endfor %}
