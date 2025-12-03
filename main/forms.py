@@ -62,3 +62,10 @@ class EditPostForm(forms.ModelForm):
         model = Post
         fields = ['post_content']
         labels = {'post_content': 'содержание поста'}
+
+class CommentForm(forms.Form):
+    comment_text = forms.CharField(required=True, label="комментарий")
+    def clean(self):
+        cleaned_data = super().clean()
+        comment_text = cleaned_data.get('comment_text')
+        return cleaned_data
