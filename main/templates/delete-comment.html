@@ -1,9 +1,8 @@
 {% extends "basic.html" %}
 {% block content %}
-<h2>новый комм</h2>
+<h2>удаление комментария</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">опубликовать</button>
+    <button type="submit">удалить</button>
 </form>
 {% endblock %}

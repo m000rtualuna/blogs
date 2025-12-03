@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
-from main.forms import RegistrationForm, CreatePostForm, EditProfileForm
+from main.forms import RegistrationForm, CreatePostForm, EditProfileForm, CommentForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -11,7 +11,7 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import UpdateView
 from django.db.models import Count
-from main.models import Post, MyUser
+from main.models import Post, MyUser, Comment
 from django.views.generic import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.edit import DeleteView
@@ -143,3 +143,60 @@ class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.object.image:
             self.object.image.delete(save=False)
         return super().delete(request, *args, **kwargs)
+
+@login_required
+def add_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment_text = form.cleaned_data.get('comment_text')
+            Comment.objects.create(
+                post=post,
+                comment_text=comment_text if comment_text else '',
+                my_user=request.user
+            )
+            return redirect('main:index')
+        else:
+            pass
+    else:
+        form = CommentForm()
+    context = {
+        'post': post,
+        'form': form,
+    }
+    return render(request, 'add_comment.html', context)
+
+
+@login_required
+def edit_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if request.user != comment.commenter:
+        return redirect('index')
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment.comment_text = form.cleaned_data['description']
+            comment.save()
+            return redirect('index')
+    else:
+        form = CommentForm(initial={'description': comment.comment_text})
+
+    context = {'form': form, 'comment': comment}
+    return render(request, 'edit_comment.html', context)
+
+
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if request.user != comment.commenter:
+        return redirect('index')
+
+    if request.method == 'POST':
+        comment.delete()
+        return redirect('index')
+
+    return redirect('index')

@@ -7,6 +7,12 @@
         <p>опубликовано: {{ p.pub_date|date:"d.m.Y H:i" }}</p>
         <p>{{ p.comment_count }} комментариев</p>
         <p>{{ p.like_count }} лайков</p>
+        {% for comment in p.comment_set.all %}
+            <p><strong>{{ comment.my_user.username }}</strong>: {{ comment.comment_text }}</p>
+        {% empty %}
+            <p>прокомментируйте этот пост первым</p>
+        {% endfor %}
+        <a href="{% url 'main:add-comment' pk=p.id %}">прокомментировать</a>
     </div>
     {% endfor %}
 
@@ -28,4 +34,3 @@
     <p>пусто :(</p>
 {% endif %}
 {% endblock %}
-
