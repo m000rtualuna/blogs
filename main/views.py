@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
-from main.forms import RegistrationForm, CreatePostForm, EditProfileForm, CommentForm
+from main.forms import RegistrationForm, PostForm, EditProfileForm, CommentForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -16,7 +16,6 @@ from django.views.generic import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.edit import DeleteView
 from django.urls import reverse
-from .forms import EditPostForm
 
 
 def index(request):
@@ -50,13 +49,10 @@ def logout_view(request):
 def profile(request):
     user_posts = Post.objects.filter(MyUser=request.user).order_by('-pub_date').annotate(
         comment_count=Count('comment'),
-        like_count=Count('likes')
-    )
-
-    context = {
-        'post_list': user_posts,
-    }
+        like_count=Count('likes'))
+    context = {'post_list': user_posts,}
     return render(request, 'profile.html', context)
+
 
 class EditProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = MyUser
@@ -91,7 +87,7 @@ class DeleteProfileView(LoginRequiredMixin, DeleteView):
 @login_required
 def create_post(request):
     if request.method == 'POST':
-        form = CreatePostForm(request.POST, request.FILES)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             Post = form.save(commit=False)
             Post.MyUser = request.user
@@ -99,8 +95,9 @@ def create_post(request):
             Post.save()
             return redirect('main:index')
     else:
-        form = CreatePostForm()
+        form = PostForm()
     return render(request, 'create_post.html', {'form': form, })
+
 
 class PostListView(generic.ListView):
     model = Post
@@ -110,9 +107,8 @@ class PostListView(generic.ListView):
 
     def get_queryset(self):
         return Post.objects.order_by('-pub_date')[:50].annotate(
-            comment_count=Count('comment'),
-            like_count=Count('likes')
-        )
+            comment_count=Count('comment', distinct=True),
+            like_count=Count('likes', distinct=True))
 
 
 @login_required
@@ -122,14 +118,14 @@ def edit_post(request, pk):
         return redirect('main:index')
 
     if request.method == 'POST':
-        form = EditPostForm(request.POST, instance=post)
+        form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
             return redirect(reverse('main:index'))
         else:
             return render(request, 'edit_post.html', {'form': form, 'post': post})
     else:
-        form = EditPostForm(instance=post)
+        form = PostForm(instance=post)
 
     return render(request, 'edit_post.html', {'form': form, 'post': post})
 
@@ -166,10 +162,7 @@ def add_comment(request, pk):
             pass
     else:
         form = CommentForm()
-    context = {
-        'post': post,
-        'form': form,
-    }
+    context = {'post': post, 'form': form,}
     return render(request, 'add_comment.html', context)
 
 
@@ -205,6 +198,7 @@ def delete_comment(request, pk):
         return redirect('main:index')
 
     return redirect('main:index')
+
 
 @login_required
 def toggle_like(request, pk):

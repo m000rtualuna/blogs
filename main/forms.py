@@ -6,9 +6,9 @@ import re
 User = get_user_model()
 
 class RegistrationForm(forms.ModelForm):
-    password = forms.CharField(label="пароль", widget=forms.PasswordInput)
-    password_confirm = forms.CharField(label="пароль (повторно)", widget=forms.PasswordInput)
-    username = forms.CharField(label="никнейм", help_text='')
+    password = forms.CharField(widget=forms.PasswordInput)
+    password_confirm = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(help_text='')
 
     class Meta:
         model = MyUser
@@ -42,21 +42,14 @@ class RegistrationForm(forms.ModelForm):
 
 
 class EditProfileForm(forms.ModelForm):
-    username = forms.CharField(label="никнейм", help_text='')
+    username = forms.CharField(help_text='')
     class Meta:
         model = MyUser
         fields = ('username', 'avatar', 'bio')
         labels = {'username': 'никнейм', 'avatar': 'аватарка', 'bio': 'расскажите о себе'}
 
 
-class CreatePostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['post_content']
-        labels = {'post_content': 'содержание поста'}
-
-
-class EditPostForm(forms.ModelForm):
+class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['post_content']
@@ -67,5 +60,4 @@ class CommentForm(forms.Form):
     comment_text = forms.CharField(required=True, label="комментарий")
     def clean(self):
         cleaned_data = super().clean()
-        comment_text = cleaned_data.get('comment_text')
         return cleaned_data
