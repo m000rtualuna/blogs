@@ -3,12 +3,19 @@
 {% if post_list %}
     {% for p in post_list %}
     <div class="post">
-        <a href="{% url 'main:detail-post' pk=p.id %}"><p>{{ p.post_content }}</p></a>
+        <p>{{ p.post_content }}</p>
+        <a href="{% url 'main:edit-post' pk=p.id %}">редактировать пост</a> <span> | </span>
+        <a href="{% url 'main:delete-post' pk=p.id %}">удалить пост</a>
         <p>опубликовано: {{ p.pub_date|date:"d.m.Y H:i" }}</p>
         <p>{{ p.comment_count }} комментариев</p>
         <p>{{ p.like_count }} лайков</p>
         {% for comment in p.comment_set.all %}
             <p><strong>{{ comment.my_user.username }}</strong>: {{ comment.comment_text }}</p>
+        <a href="{% url 'main:edit-comment' pk=comment.id %}">редактировать</a> <span> | </span>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="submit" value="удалить" class="button"/>
+        </form>
         {% empty %}
             <p>прокомментируйте этот пост первым</p>
         {% endfor %}

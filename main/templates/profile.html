@@ -1,11 +1,9 @@
 {% extends "basic.html" %}
 {% block content %}
 <h2>профиль {{ user.username }}</h2>
-
 {% if user.bio %}
 <p>инфа об этой няшке: {{ user.bio }}</p>
 {% endif %}
-
 {% if user.avatar %}
 <img src="{{ user.avatar.url }}" alt="аватарка" width="200" height="200">
 {% else %}

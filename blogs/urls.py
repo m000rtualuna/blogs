@@ -5,10 +5,12 @@ from django.conf import settings
 from django.urls import include
 from django.views.decorators.cache import never_cache
 from django.views.static import serve
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', include('main.urls')),
+    path('', RedirectView.as_view(url=' main/', permanent=True))
 ]
 
 if settings.DEBUG:

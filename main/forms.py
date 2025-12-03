@@ -3,7 +3,6 @@ from main.models import MyUser, Post
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 import re
-
 User = get_user_model()
 
 class RegistrationForm(forms.ModelForm):
@@ -62,6 +61,7 @@ class EditPostForm(forms.ModelForm):
         model = Post
         fields = ['post_content']
         labels = {'post_content': 'содержание поста'}
+
 
 class CommentForm(forms.Form):
     comment_text = forms.CharField(required=True, label="комментарий")

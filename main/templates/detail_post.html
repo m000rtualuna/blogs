@@ -1,6 +1,0 @@
-{% extends "basic.html" %}
-{% block content %}
-<h2>детали получается</h2>
-<a href="{% url 'main:edit-post' pk=post.id %}">редактировать пост</a>
-<a href="{% url 'main:delete-post' pk=post.id %}">удалить пост</a>
-{% endblock %}

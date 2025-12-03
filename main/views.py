@@ -18,14 +18,16 @@ from django.views.generic.edit import DeleteView
 from django.urls import reverse
 from .forms import EditPostForm
 
+
 def index(request):
     return render(request, 'basic.html')
 
+
 class MainLoginView(LoginView):
     template_name = 'login.html'
-
     def get_success_url(self):
         return reverse('main:index')
+
 
 def registration(request):
     if request.method == 'POST':
@@ -47,32 +49,6 @@ def logout_view(request):
 @login_required
 def profile(request):
     return render(request, 'profile.html')
-
-
-@login_required
-def create_post(request):
-    if request.method == 'POST':
-        form = CreatePostForm(request.POST, request.FILES)
-        if form.is_valid():
-            Post = form.save(commit=False)
-            Post.MyUser = request.user
-            Post.pub_date = timezone.now()
-            Post.save()
-            return redirect('main:index')
-    else:
-        form = CreatePostForm()
-    return render(request, 'create_post.html', {'form': form, })
-
-
-class PostListView(generic.ListView):
-    model = Post
-    paginate_by = 50
-    template_name = 'index.html'
-    context_object_name = 'post_list'
-
-    def get_queryset(self):
-        return Post.objects.annotate(comment_count=Count('comment'), like_count=Count('like')).order_by('-pub_date')
-
 
 class EditProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = MyUser
@@ -104,16 +80,36 @@ class DeleteProfileView(LoginRequiredMixin, DeleteView):
         return get_object_or_404(queryset, pk=self.user_id)
 
 
-class DetailPost(generic.DetailView):
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = CreatePostForm(request.POST, request.FILES)
+        if form.is_valid():
+            Post = form.save(commit=False)
+            Post.MyUser = request.user
+            Post.pub_date = timezone.now()
+            Post.save()
+            return redirect('main:index')
+    else:
+        form = CreatePostForm()
+    return render(request, 'create_post.html', {'form': form, })
+
+
+class PostListView(generic.ListView):
     model = Post
-    template_name = 'detail_post.html'
-    context_object_name = 'post'
+    paginate_by = 50
+    template_name = 'index.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        return Post.objects.annotate(comment_count=Count('comment'), like_count=Count('like')).order_by('-pub_date')
+
 
 @login_required
 def edit_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if post.MyUser != request.user:
-        return redirect('index')
+        return redirect('main:index')
 
     if request.method == 'POST':
         form = EditPostForm(request.POST, instance=post)
@@ -126,7 +122,6 @@ def edit_post(request, pk):
         form = EditPostForm(instance=post)
 
     return render(request, 'edit_post.html', {'form': form, 'post': post})
-
 
 
 class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -143,6 +138,7 @@ class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.object.image:
             self.object.image.delete(save=False)
         return super().delete(request, *args, **kwargs)
+
 
 @login_required
 def add_comment(request, pk):
@@ -172,17 +168,17 @@ def add_comment(request, pk):
 def edit_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
 
-    if request.user != comment.commenter:
-        return redirect('index')
+    if request.user != comment.my_user:
+        return redirect('main:index')
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment.comment_text = form.cleaned_data['description']
+            comment.comment_text = form.cleaned_data['comment_text']
             comment.save()
-            return redirect('index')
+            return redirect('main:index')
     else:
-        form = CommentForm(initial={'description': comment.comment_text})
+        form = CommentForm(initial={'comment_text': comment.comment_text})
 
     context = {'form': form, 'comment': comment}
     return render(request, 'edit_comment.html', context)
@@ -192,11 +188,11 @@ def edit_comment(request, pk):
 def delete_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
 
-    if request.user != comment.commenter:
-        return redirect('index')
+    if request.user != comment.my_user:
+        return redirect('main:index')
 
     if request.method == 'POST':
         comment.delete()
-        return redirect('index')
+        return redirect('main:index')
 
-    return redirect('index')
+    return redirect('main:index')
