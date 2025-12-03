@@ -1,11 +1,6 @@
 {% extends "basic.html" %}
 {% block content %}
 <h2>детали получается</h2>
-
-{% if post_list %}
-    {% for p in post_list %}
-    <div class="post">
-        <a href="{% url 'main:edit-post' pk=p.id %}"><p>{{ p.post_content }}</p></a>
-        {% endfor %}
-        {% endif %}
+<a href="{% url 'main:edit-post' pk=post.id %}">редактировать пост</a>
+<a href="{% url 'main:delete-post' pk=post.id %}">удалить пост</a>
 {% endblock %}

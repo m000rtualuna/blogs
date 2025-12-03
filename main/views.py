@@ -107,19 +107,26 @@ class DeleteProfileView(LoginRequiredMixin, DeleteView):
 class DetailPost(generic.DetailView):
     model = Post
     template_name = 'detail_post.html'
+    context_object_name = 'post'
 
+@login_required
 def edit_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    if post.MyUser != request.user:
+        return redirect('index')
 
     if request.method == 'POST':
         form = EditPostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
-            return redirect('detail_post', pk=post.pk)
+            return redirect(reverse('main:index'))
+        else:
+            return render(request, 'edit_post.html', {'form': form, 'post': post})
     else:
         form = EditPostForm(instance=post)
 
     return render(request, 'edit_post.html', {'form': form, 'post': post})
+
 
 
 class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
