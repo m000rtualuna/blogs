@@ -48,7 +48,15 @@ def logout_view(request):
 
 @login_required
 def profile(request):
-    return render(request, 'profile.html')
+    user_posts = Post.objects.filter(MyUser=request.user).order_by('-pub_date').annotate(
+        comment_count=Count('comment'),
+        like_count=Count('likes')
+    )
+
+    context = {
+        'post_list': user_posts,
+    }
+    return render(request, 'profile.html', context)
 
 class EditProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = MyUser
@@ -94,15 +102,17 @@ def create_post(request):
         form = CreatePostForm()
     return render(request, 'create_post.html', {'form': form, })
 
-
 class PostListView(generic.ListView):
     model = Post
-    paginate_by = 50
+    paginate_by = 3
     template_name = 'index.html'
     context_object_name = 'post_list'
 
     def get_queryset(self):
-        return Post.objects.annotate(comment_count=Count('comment'), like_count=Count('likes')).order_by('-pub_date')
+        return Post.objects.order_by('-pub_date')[:50].annotate(
+            comment_count=Count('comment'),
+            like_count=Count('likes')
+        )
 
 
 @login_required
@@ -140,7 +150,6 @@ class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@login_required
 def add_comment(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':

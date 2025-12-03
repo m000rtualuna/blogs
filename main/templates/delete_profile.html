@@ -1,8 +1,8 @@
 {% extends "basic.html" %}
 {% block content %}
-<h2>удаление пользователя {{ object.username }}</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">удалить</button>
-</form>
+    <h2>удаление пользователя {{ object.username }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">удалить</button>
+    </form>
 {% endblock %}

@@ -1,0 +1,225 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color: #F7F7F7;
+    background-color: #1A1A1A;
+}
+
+a {
+    text-decoration: none;
+    color: #E2001A;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #FF6673;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    background-color: #222222;
+    color: #F7F7F7;
+    flex-shrink: 0;
+    border-right: 2px solid #E2001A;
+}
+
+.nav a {
+    padding: 10px 20px;
+    color: #F7F7F7;
+    display: block;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.nav a:hover {
+    background-color: #E2001A;
+    color: #1A1A1A;
+    text-decoration: none;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #1A1A1A;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    color: #F7F7F7;
+    gap: 30px;
+}
+
+.post {
+    background-color: #2D2D2D;
+    padding: 15px;
+    width: 95%;
+    box-shadow: 0 0 10px #E2001A;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 20px;
+}
+
+.post p {
+    line-height: 1.5;
+    color: #F7F7F7;
+}
+
+.post a {
+    display: block;
+    color: #E2001A;
+}
+
+.post form {
+    display: block;
+}
+
+.post .button {
+    background-color: #E2001A;
+    color: #F7F7F7;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+}
+
+.post .button:hover {
+    background-color: #B50015;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    gap: 10px;
+}
+
+.pagination a,
+.pagination .current {
+    display: inline-block;
+    padding: 8px 15px;
+    border: 1px solid #E2001A;
+    color: #E2001A;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pagination a:hover {
+    background-color: #E2001A;
+    color: #F7F7F7;
+    text-decoration: none;
+}
+
+.pagination .current {
+    background-color: #E2001A;
+    color: #F7F7F7;
+    font-weight: bold;
+}
+
+.content h2 {
+    color: #E2001A;
+    letter-spacing: 2px;
+}
+
+.content p {
+    line-height: 1.6;
+    color: #F7F7F7;
+}
+
+.content img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    border: 3px solid #E2001A;
+    border-radius: 50%;
+}
+
+.content > a {
+    display: block;
+    color: #E2001A;
+}
+
+button {
+    background-color: #E2001A;
+    color: #F7F7F7;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background-color: #B50015;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    background-color: #2D2D2D;
+    border: 1px solid #444444;
+    color: #F7F7F7;
+    font-size: 1em;
+    box-sizing: border-box;
+    outline: none;
+    border-radius: 2px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    border-color: #E2001A;
+    box-shadow: 0 0 0 3px rgba(226, 0, 26, 0.4);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #888888;
+    opacity: 1;
+}
+
+form label {
+    color: #F7F7F7;
+    display: block;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.content form {
+    align-items: center;
+}
+
+.actions-w-post,
+.statistics,
+.actions-w-com {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+}

@@ -1,14 +1,74 @@
 {% extends "basic.html" %}
 {% block content %}
-<h2>профиль {{ user.username }}</h2>
-{% if user.bio %}
-<p>инфа об этой няшке: {{ user.bio }}</p>
-{% endif %}
-{% if user.avatar %}
-<img src="{{ user.avatar.url }}" alt="аватарка" width="200" height="200">
-{% else %}
-<p>здесь аватарка (не найдено)</p>
-{% endif %}
-<a href="{% url 'main:edit-profile' %}">редактировать профиль</a>
-<a href="{% url 'main:delete-profile' %}">удалить</a>
+    <h2>профиль {{ user.username }}</h2>
+    {% if user.bio %}
+    {% endif %}
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="аватарка" width="200" height="200">
+    {% else %}
+        <p>здесь аватарка (не найдено)</p>
+    {% endif %}
+    <p>инфа об этой няшке: {{ user.bio }}</p>
+
+    {% if post_list %}
+        {% for p in post_list %}
+            <div class="post">
+                <p><strong>содержание поста: {{ p.post_content }}</strong></p>
+                <p>автор: {{ p.MyUser }}</p>
+                <p>опубликовано: {{ p.pub_date|date:"d.m.Y H:i" }}</p>
+                <div class="statistics">
+                    <p>количество комментариев: {{ p.comment_count }}</p> <span> | </span>
+                    <p>количество лайков: {{ p.like_count }}</p>
+                </div>
+                {% if request.user == p.MyUser %}
+                    <div class="actions-w-post">
+                        <a href="{% url 'main:edit-post' pk=p.id %}">редактировать пост</a> <span> | </span>
+                        <a href="{% url 'main:delete-post' pk=p.id %}">удалить пост</a>
+                    </div>
+                {% endif %}
+
+                <a href="{% url 'main:toggle_like' pk=p.pk %}">
+                    {% if request.user in p.likes.all %}
+                        убрать лайк
+                    {% else %}
+                        поставить лайк
+                    {% endif %}
+                </a>
+
+                <p><strong>комментарии:</strong></p>
+                {% for comment in p.comment_set.all %}
+                    <p>{{ comment.my_user.username }}: {{ comment.comment_text }}</p>
+
+                    <div class="actions-w-com">
+                        {% if request.user == comment.my_user %}
+                            <a href="{% url 'main:edit-comment' pk=comment.id %}">редактировать</a>
+                            <form action="{% url 'main:delete-comment' pk=comment.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" value="удалить" class="button"/>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p>прокомментируйте этот пост первым</p>
+                {% endfor %}
+                <a href="{% url 'main:add-comment' pk=p.id %}">написать пару ласковых</a>
+            </div>
+        {% endfor %}
+
+        {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+                {% endif %}
+                <span class="current">
+                    страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>посты не найдены</p>
+    {% endif %}
 {% endblock %}
