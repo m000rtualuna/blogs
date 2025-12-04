@@ -54,12 +54,11 @@ def profile(request):
     return render(request, 'profile.html', context)
 
 
-class EditProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+class EditProfileView(LoginRequiredMixin, UpdateView):
     model = MyUser
     template_name = 'edit_profile.html'
     form_class = EditProfileForm
     success_url = reverse_lazy('main:profile')
-    success_message = 'Данные изменены'
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -114,9 +113,6 @@ class PostListView(generic.ListView):
 @login_required
 def edit_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    if post.MyUser != request.user:
-        return redirect('main:index')
-
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
@@ -126,7 +122,6 @@ def edit_post(request, pk):
             return render(request, 'edit_post.html', {'form': form, 'post': post})
     else:
         form = PostForm(instance=post)
-
     return render(request, 'edit_post.html', {'form': form, 'post': post})
 
 
@@ -144,6 +139,7 @@ class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.object.image:
             self.object.image.delete(save=False)
         return super().delete(request, *args, **kwargs)
+
 
 @login_required
 def add_comment(request, pk):
@@ -189,14 +185,11 @@ def edit_comment(request, pk):
 @login_required
 def delete_comment(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
-
     if request.user != comment.my_user:
         return redirect('main:index')
-
     if request.method == 'POST':
         comment.delete()
         return redirect('main:index')
-
     return redirect('main:index')
 
 
@@ -204,10 +197,8 @@ def delete_comment(request, pk):
 def toggle_like(request, pk):
     post = get_object_or_404(Post, pk=pk)
     user = request.user
-
     if user in post.likes.all():
         post.likes.remove(user)
     else:
         post.likes.add(user)
-
     return redirect('main:index')
