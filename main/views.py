@@ -145,7 +145,7 @@ class DeletePost(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             self.object.image.delete(save=False)
         return super().delete(request, *args, **kwargs)
 
-
+@login_required
 def add_comment(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':

@@ -17,14 +17,6 @@
                     </div>
                 {% endif %}
 
-                <a href="{% url 'main:toggle_like' pk=p.pk %}">
-                    {% if request.user in p.likes.all %}
-                        убрать лайк
-                    {% else %}
-                        поставить лайк
-                    {% endif %}
-                </a>
-
                 <p><strong>комментарии:</strong></p>
                 {% for comment in p.comment_set.all %}
                     <p>{{ comment.my_user.username }}: {{ comment.comment_text }}</p>
@@ -41,7 +33,20 @@
                 {% empty %}
                     <p>прокомментируйте этот пост первым</p>
                 {% endfor %}
+
+                {% if user.is_authenticated %}
+                <a href="{% url 'main:toggle_like' pk=p.pk %}">
+                    {% if request.user in p.likes.all %}
+                        убрать лайк
+                    {% else %}
+                        поставить лайк
+                    {% endif %}
+                </a>
+
                 <a href="{% url 'main:add-comment' pk=p.id %}">написать пару ласковых</a>
+                {% else %}
+                <p>зарегистрируйтесь или войдите в аккаунт чтобы что? ставить лайки и писать комментарии</p>
+                {% endif %}
             </div>
         {% endfor %}
 
