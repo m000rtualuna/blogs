@@ -6,9 +6,9 @@ import re
 User = get_user_model()
 
 class RegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    password_confirm = forms.CharField(widget=forms.PasswordInput)
-    username = forms.CharField(help_text='')
+    password = forms.CharField(label="пароль", widget=forms.PasswordInput)
+    password_confirm = forms.CharField(label="пароль (повторно)", widget=forms.PasswordInput)
+    username = forms.CharField(label="никнейм", help_text='')
 
     class Meta:
         model = MyUser
@@ -42,7 +42,7 @@ class RegistrationForm(forms.ModelForm):
 
 
 class EditProfileForm(forms.ModelForm):
-    username = forms.CharField(help_text='')
+    username = forms.CharField(label="никнейм", help_text='')
     class Meta:
         model = MyUser
         fields = ('username', 'avatar', 'bio')
